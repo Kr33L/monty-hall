@@ -12,22 +12,26 @@ submit.addEventListener("click", (e) => {
 
 // <--- Simulation logic --->
 function simulation(simulations) {
-	const randomIndex = (array) => Math.floor(Math.random() * array.length);
-	const doors = [1, 2, 3];
 	let results = [];
-
 	//<-- Loop through the simulations using a reverse while loop -->
 	while (simulations--) {
+		// <-- Create the doors -->
+		const doors = [1, 2, 3];
+		//make sure the index is unique
+		const randomIndex = (array) => Math.floor(Math.random() * array.length);
+		//assign each door to a random index
 		const prize = randomIndex(doors);
 		const choice = randomIndex(doors);
 
 		// <- Filter monty's, and switch choices ->
-		const monty = doors.filter((door) => door !== prize || choice)[0];
-		const switchChoice = doors.filter((door) => door !== monty || choice)[0];
+		const monty = doors.filter((door) => door !== prize || door !== choice)[0];
+		const switchChoice = doors.filter((door) => door !== monty || door !== choice)[0];
 
 		// <- Filter wins with both methods ->
 		const stayWin = choice === prize ? 1 : 0;
 		const switchWin = switchChoice === prize ? 1 : 0;
+
+		if ((stayWin === 1 && switchWin === 1) || (stayWin === 0 && switchWin === 0)) continue;
 
 		results.push({ switchWin, stayWin });
 	}
@@ -70,7 +74,7 @@ function run(simulations, depth = 0) {
 	const wins = calculate(results);
 
 	// <-- Log the results -->
-	console.group(`Simulations: ${simulations}`);
+	console.group(`Simulation Attempts: ${simulations} Passed: ${results.length}`);
 
 	console.log(`Switch:
   average:    ${decimal(wins.switch.average)}
