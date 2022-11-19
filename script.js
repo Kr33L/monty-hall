@@ -16,8 +16,8 @@ function simulation(simulations) {
 	const doors = [1, 2, 3];
 	let results = [];
 
-	//<-- Loop through the simulations -->
-	for (let i = 0; i < simulations; i++) {
+	//<-- Loop through the simulations using a reverse loop -->
+	for (let i = simulations; i--;) {
 		const prize = randomIndex(doors);
 		const choice = randomIndex(doors);
 
