@@ -55,3 +55,24 @@ function calculate(results) {
 		},
 	});
 }
+
+
+function run(simulations, depth = 0) {
+	console.group(`Simulations: ${simulations}`);
+	const results = simulation(simulations);
+	const wins = calculate(results);
+
+	if (depth >= 1) {
+		console.group("In depth results");
+		console.table(wins);
+		console.groupEnd();
+	}
+
+	if (depth >= 2) {
+		console.group("In depther results");
+		console.table(results);
+		console.groupEnd();
+	}
+
+	console.groupEnd();
+}
