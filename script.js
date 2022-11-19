@@ -19,3 +19,39 @@ function simulation(simulations) {
 	}
 	return results;
 }
+
+
+function calculate(results) {
+	const decimal = (number) => number.toFixed(1);
+
+	// Calculate the wins, average and percentages
+	const switchWinTotal = results.filter((result) => result.switchWin === 1).length;
+	const stayWinTotal = results.filter((result) => result.stayWin === 1).length;
+
+	const switchWinAverage = switchWinTotal / results.length;
+	const stayWinAverage = stayWinTotal / results.length;
+
+	const switchWinPercentage = switchWinAverage * 100;
+	const stayWinPercentage = stayWinAverage * 100;
+
+	console.log(`Switch:
+  average:    ${decimal(switchWinAverage)}
+  percentage: ${decimal(switchWinPercentage)}%`);
+
+	console.log(`Stay:
+  average:    ${decimal(stayWinAverage)}
+  percentage: ${decimal(stayWinPercentage)}%`);
+
+	return (wins = {
+		switch: {
+			total: switchWinTotal,
+			average: switchWinAverage,
+			percentage: switchWinPercentage,
+		},
+		stay: {
+			total: stayWinTotal,
+			average: stayWinAverage,
+			percentage: stayWinPercentage,
+		},
+	});
+}
