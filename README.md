@@ -1,3 +1,5 @@
+[![wakatime](https://wakatime.com/badge/github/Kr33L/monty-hall.svg)](https://wakatime.com/badge/github/Kr33L/monty-hall)
+
 # Monty Hall Problem
 
 Vos Savant presented a solution that was initially rejected by popular media. This project will attempt to demonstrate that Vos Savant was correct.
