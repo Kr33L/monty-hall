@@ -4,12 +4,10 @@
 
 Vos Savant presented a solution that was initially rejected by popular media. This project will attempt to demonstrate that Vos Savant was correct.
 
-### _Steps:_
-
-- Gain an understanding of the problem,
-- Convince yourself that Vos Savant was correct,
-- Run sample games employing either the stick or switch strategy,
-- Show that the switch strategy is statistically the best option.
+### _Branching:_
+There are two branches:
+- **Main** branch is the main working code
+- **Functional** branch is an attempt to use rewrite the main code using pure functional programming.
 
 ### _Methodology:_
 
