@@ -2,6 +2,16 @@ const input = document.querySelector("input");
 const submit = document.querySelector("button");
 const pageResults = document.querySelector("#results");
 
+// <====== On page load ======>
+
+console.log(`To run the simulation, use the command "run(number of simulations, OPTIONAL depth of results)"
+Example:
+run(1000, 2)
+run(1000)
+Depth 0: Only the total
+Depth 1: Total, average and percentage in a table
+Depth 2: Wins and losses in a table for each simulation`);
+
 // <====== Event listeners ======>
 submit.addEventListener("click", (e) => {
 	e.preventDefault();
@@ -13,33 +23,39 @@ submit.addEventListener("click", (e) => {
 // <--- Simulation logic --->
 function simulation(simulations) {
 	let results = [];
-	//<-- Loop through the simulations using a reverse while loop -->
+
+	//<-- Loop through the simulations -->
 	while (simulations--) {
 		// <-- Create the doors -->
 		const doors = [1, 2, 3];
-		//make sure the index is unique
-		const randomIndex = (array) => Math.floor(Math.random() * array.length);
-		//assign each door to a random index
-		const prize = randomIndex(doors);
-		const choice = randomIndex(doors);
+		const randomDoor = (doors) => Math.floor(Math.random() * doors.length);
 
-		// <- Filter monty's, and switch choices ->
-		const monty = doors.filter((door) => door !== prize || door !== choice)[0];
-		const switchChoice = doors.filter((door) => door !== monty || door !== choice)[0];
+		// <-- Randomly assign the prize to a door -->
+		const prize = randomDoor(doors);
 
-		// <- Filter wins with both methods ->
-		const stayWin = choice === prize ? 1 : 0;
+		// <- Filter stay, monty, and switch choices ->
+		const stayChoice = randomDoor(doors.filter((door) => door !== prize)); //not the prize
+		const monty = doors.find((door) => door !== prize && door !== stayChoice); //not the prize or the stay choice
+		const switchChoice = doors.find((door) => door !== monty && door !== stayChoice); //not monty or stay choice
+
+		// <-- Check if the player won -->
 		const switchWin = switchChoice === prize ? 1 : 0;
+		const stayWin = stayChoice === prize ? 1 : 0;
 
-		if ((stayWin === 1 && switchWin === 1) || (stayWin === 0 && switchWin === 0)) continue;
-
-		results.push({ switchWin, stayWin });
+		// <-- If switch or stay won, add the result to the results array else keep looping-->
+		if (switchWin !== stayWin) {
+			results.push({ switchWin, stayWin });
+		} else {
+			simulations++;
+		}
 	}
 	return results;
 }
 
 // <--- Calculate the results --->
 function calculate(results) {
+	const decimal = (number) => number.toFixed(2);
+
 	// <-- Wins -->
 	const switchWinTotal = results.filter((result) => result.switchWin === 1).length;
 	const stayWinTotal = results.filter((result) => result.stayWin === 1).length;
@@ -53,23 +69,22 @@ function calculate(results) {
 	const stayWinPercentage = stayWinAverage * 100;
 
 	// <-- Return the results as an object -->
-	return (wins = {
+	return {
 		switch: {
 			total: switchWinTotal,
-			average: switchWinAverage,
-			percentage: switchWinPercentage,
+			average: decimal(switchWinAverage),
+			percentage: decimal(switchWinPercentage) + "%",
 		},
 		stay: {
 			total: stayWinTotal,
-			average: stayWinAverage,
-			percentage: stayWinPercentage,
+			average: decimal(stayWinAverage),
+			percentage: decimal(stayWinPercentage) + "%",
 		},
-	});
+	};
 }
 
 // <--- Run the simulation --->
 function run(simulations, depth = 0) {
-	const decimal = (number) => number.toFixed(1);
 	const results = simulation(simulations);
 	const wins = calculate(results);
 
@@ -77,12 +92,12 @@ function run(simulations, depth = 0) {
 	console.group(`Simulation Attempts: ${simulations} Passed: ${results.length}`);
 
 	console.log(`Switch:
-  average:    ${decimal(wins.switch.average)}
-  percentage: ${decimal(wins.switch.percentage)}%`);
+  average:    ${wins.switch.average}
+  percentage: ${wins.switch.percentage}`);
 
 	console.log(`Stay:
-  average:    ${decimal(wins.stay.average)}
-  percentage: ${decimal(wins.stay.percentage)}%`);
+  average:    ${wins.stay.average}
+  percentage: ${wins.stay.percentage}`);
 
 	if (depth >= 1) {
 		console.group("In depth results");
@@ -103,14 +118,3 @@ function run(simulations, depth = 0) {
   <p>Stay wins: ${wins.stay.total}</p>
   `;
 }
-
-// <====== On page load ======>
-
-console.log(`To run the simulation, use the command "run(number of simulations, OPTIONAL depth of results)"
-Example:
-run(1000, 2)
-run(1000)
-
-Depth 0: Only the total
-Depth 1: Total, average and percentage in a table
-Depth 2: Wins and losses in a table for each simulation`);
