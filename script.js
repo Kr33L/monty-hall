@@ -1,50 +1,37 @@
 const input = document.querySelector("input");
 const submit = document.querySelector("button");
 const pageResults = document.querySelector("#results");
+const doors = [1, 2, 3];
 
 // <====== On page load ======>
 
-console.log(`To run the simulation, use the command "run(number of simulations, OPTIONAL depth of results)"
-Example:
-run(1000, 2)
-run(1000)
-Depth 0: Only the total
-Depth 1: Total, average and percentage in a table
-Depth 2: Wins and losses in a table for each simulation`);
+console.log(startingLog());
+submitHandler();
 
 // <====== Event listeners ======>
-submit.addEventListener("click", (e) => {
-	e.preventDefault();
-	run(input.value);
-});
+
+function submitHandler() {
+	submit.addEventListener("click", (e) => {
+		e.preventDefault();
+		run(input.value);
+	});
+}
 
 // <====== Functions ======>
 
-// <--- Simulation logic --->
+// <--- Simulation loop --->
 function simulation(simulations) {
 	let results = [];
-
-	//<-- Loop through the simulations -->
 	while (simulations--) {
-		// <-- Create the doors -->
-		const doors = [1, 2, 3];
-		const randomDoor = (doors) => Math.floor(Math.random() * doors.length);
-
-		// <-- Randomly assign the prize to a door -->
-		const prize = randomDoor(doors);
-
-		// <- Filter stay, monty, and switch choices ->
-		const stayChoice = randomDoor(doors.filter((door) => door !== prize)); //not the prize
-		const monty = doors.find((door) => door !== prize && door !== stayChoice); //not the prize or the stay choice
-		const switchChoice = doors.find((door) => door !== monty && door !== stayChoice); //not monty or stay choice
-
-		// <-- Check if the player won -->
-		const switchWin = switchChoice === prize ? 1 : 0;
-		const stayWin = stayChoice === prize ? 1 : 0;
+		// <-- Initialize variables -->
+		prize();
+		stayChoice();
+		monty();
+		switchChoice();
 
 		// <-- If switch or stay won, add the result to the results array else keep looping-->
-		if (switchWin !== stayWin) {
-			results.push({ switchWin, stayWin });
+		if (win(switchChoice()) === win(stayChoice())) {
+			results.push({ switchWin: win(switchChoice()), stayWin: win(stayChoice()) });
 		} else {
 			simulations++;
 		}
@@ -118,3 +105,24 @@ function run(simulations, depth = 0) {
   <p>Stay wins: ${wins.stay.total}</p>
   `;
 }
+
+function startingLog() {
+	return `To run the simulation, use the command "run(number of simulations, OPTIONAL depth of results)"
+  Example:
+    run(1000, 2)
+    run(1000)
+
+    Depth 0: Only the total
+    Depth 1: Total, average and percentage in a table
+    Depth 2: Wins and losses in a table for each simulation`;
+}
+
+// <--- Helper functions --->
+const randomDoor = (array) => Math.floor(Math.random() * array.length);
+const prize = () => randomDoor(doors);
+const stayChoice = () => randomDoor(doors.filter((door) => door !== prize));
+const switchChoice = () => randomDoor(doors.filter((door) => door !== prize && door !== stayChoice));
+const monty = () => randomDoor(doors.filter((door) => door !== prize && door !== stayChoice));
+const switchWin = () => switchChoice() === prize();
+const stayWin = () => stayChoice() === prize();
+const win = (type) => (type === prize() ? 1 : 0);
