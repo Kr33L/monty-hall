@@ -22,20 +22,7 @@ function submitHandler() {
 // <--- Simulation loop --->
 function simulation(simulations) {
 	let results = [];
-	while (simulations--) {
-		// <-- Initialize variables -->
-		prize();
-		stayChoice();
-		monty();
-		switchChoice();
-
-		// <-- If switch or stay won, add the result to the results array else keep looping-->
-		if (win(switchChoice()) === win(stayChoice())) {
-			results.push({ switchWin: win(switchChoice()), stayWin: win(stayChoice()) });
-		} else {
-			simulations++;
-		}
-	}
+	loop(simulations, results);
 	return results;
 }
 
@@ -118,11 +105,33 @@ function startingLog() {
 }
 
 // <--- Helper functions --->
+
 const randomDoor = (array) => Math.floor(Math.random() * array.length);
-const prize = () => randomDoor(doors);
-const stayChoice = () => randomDoor(doors.filter((door) => door !== prize));
-const switchChoice = () => randomDoor(doors.filter((door) => door !== prize && door !== stayChoice));
-const monty = () => randomDoor(doors.filter((door) => door !== prize && door !== stayChoice));
-const switchWin = () => switchChoice() === prize();
-const stayWin = () => stayChoice() === prize();
-const win = (type) => (type === prize() ? 1 : 0);
+
+const prizeDoor = () => randomDoor(doors);
+
+const stayDoor = () => randomDoor(doors.filter((door) => door !== prizeDoor()));
+
+const switchDoor = () => randomDoor(doors.filter((door) => door !== montyDoor() && door !== stayDoor()));
+
+const montyDoor = () => randomDoor(doors.filter((door) => door !== prizeDoor() && door !== stayDoor()));
+
+const switchWin = () => switchDoor() === prizeDoor();
+
+const stayWin = () => stayDoor() === prizeDoor();
+
+const win = (type) => (type === prizeDoor() ? 1 : 0);
+
+function loop(number, array) {
+	while (number--) {
+		prizeDoor();
+		stayDoor();
+		montyDoor();
+		switchDoor();
+		if (win(switchDoor()) === win(stayDoor())) {
+			array.push({ switchWin: win(switchDoor()), stayWin: win(stayDoor()) });
+		} else {
+			number++;
+		}
+	}
+}
