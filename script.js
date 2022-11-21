@@ -13,6 +13,7 @@ Depth 1: Total, average and percentage in a table
 Depth 2: Wins and losses in a table for each simulation`);
 
 // <====== Event listeners ======>
+
 submit.addEventListener("click", (e) => {
 	e.preventDefault();
 	run(input.value);
@@ -34,9 +35,9 @@ function simulation(simulations) {
 		const prize = randomDoor(doors);
 
 		// <- Filter stay, monty, and switch choices ->
-		const stayChoice = randomDoor(doors.filter((door) => door !== prize)); //not the prize
-		const monty = doors.find((door) => door !== prize && door !== stayChoice); //not the prize or the stay choice
-		const switchChoice = doors.find((door) => door !== monty && door !== stayChoice); //not monty or stay choice
+		const stayChoice = randomDoor(doors.filter((door) => door !== prize)); // condition is probably redundant
+		const monty = doors.find((door) => door !== prize || stayChoice);
+		const switchChoice = doors.find((door) => door !== monty || stayChoice);
 
 		// <-- Check if the player won -->
 		const switchWin = switchChoice === prize ? 1 : 0;
@@ -88,27 +89,26 @@ function run(simulations, depth = 0) {
 	const results = simulation(simulations);
 	const wins = calculate(results);
 
+	const table = (name, condition) => {
+		console.group(name);
+		console.table(condition);
+		console.groupEnd();
+	};
+
+	const log = (name, average, percentage) => {
+		console.log(`${name}:
+    average: ${average}
+    percentage: ${percentage}`);
+	};
+
 	// <-- Log the results -->
 	console.group(`Simulation Attempts: ${simulations} Passed: ${results.length}`);
 
-	console.log(`Switch:
-  average:    ${wins.switch.average}
-  percentage: ${wins.switch.percentage}`);
+	log("Switch", wins.switch.average, wins.switch.percentage);
+	log("Stay", wins.stay.average, wins.stay.percentage);
 
-	console.log(`Stay:
-  average:    ${wins.stay.average}
-  percentage: ${wins.stay.percentage}`);
-
-	if (depth >= 1) {
-		console.group("In depth results");
-		console.table(wins);
-		console.groupEnd();
-	}
-	if (depth >= 2) {
-		console.group("In depther results");
-		console.table(results);
-		console.groupEnd();
-	}
+	if (depth >= 1) table("In depth results", wins);
+	if (depth >= 2) table("In depther results", results);
 
 	console.groupEnd();
 
