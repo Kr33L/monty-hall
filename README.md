@@ -7,7 +7,7 @@ Vos Savant presented a solution that was initially rejected by popular media. Th
 ### _Branching:_
 There are two branches:
 - **Main** branch is the main working code
-- **Functional** branch is an attempt to use rewrite the main code using pure functional programming.
+- **Functional** branch is an attempt to rewrite the main code using pure functional programming.
 
 ### _Methodology:_
 
