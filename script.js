@@ -35,9 +35,9 @@ function simulation(simulations) {
 		const prize = randomDoor(doors);
 
 		// <- Filter stay, monty, and switch choices ->
-		const stayChoice = randomDoor(doors.filter((door) => door !== prize)); // condition is probably redundant
-		const monty = doors.find((door) => door !== prize || stayChoice);
-		const switchChoice = doors.find((door) => door !== monty || stayChoice);
+		const stayChoice = randomDoor(doors.filter((door) => door !== prize));
+		const monty = doors.find((door) => door !== prize && door !== stayChoice);
+		const switchChoice = doors.find((door) => door !== monty && door !== stayChoice);
 
 		// <-- Check if the player won -->
 		const switchWin = switchChoice === prize ? 1 : 0;
@@ -47,6 +47,7 @@ function simulation(simulations) {
 		if (switchWin !== stayWin) {
 			results.push({ switchWin, stayWin });
 		} else {
+			console.error(`Both methods have won or lost. Retrying...`);
 			simulations++;
 		}
 	}
